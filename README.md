@@ -17,25 +17,12 @@ conda activate blinkwise
 pip install -r requirements.txt
 ```
 
-BlinkWise requires TensorFlow 2.15.0.post1. Depending on your system, install the appropriate version:
-
-- *For systems **WITH** a GPU, install the GPU version of TensorFlow along with CUDA dependencies:
+BlinkWise requires TensorFlow 2.15.0.post1. 
+Please install the GPU version of TensorFlow along with CUDA dependencies:
 
 ```bash
 pip install 'tensorflow[and-cuda]==2.15.0.post1'
 conda install -y -c nvidia/label/cuda-12.1.0 cuda
-```
-
-- For systems **WITHOUT** a GPU, install the CPU version of TensorFlow:
-
-```bash
-pip install 'tensorflow==2.15.0.post1'
-```
-
-On macOS, please install:
-
-```bash
-pip install 'tensorflow-macos==2.15.0'
 ```
 
 _Optional_: Install the following package to enable model architecture visualization:
@@ -127,6 +114,15 @@ The raw measurements will be processed using the following protocol:
 
 ### Training
 
+Pre-trained artifacts are available for download (~76 MB) by running:
+
+```bash
+python scripts/download.py --pretrained-artifacts
+```
+
+The default download path is `data/reproducing-results`. Or you may manually download
+at [Google Drive](https://drive.google.com/file/d/1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf/view?usp=sharing) (preview available).
+
 To train the model, run:
 
 ```bash
@@ -138,14 +134,7 @@ Before training, if you placed `processed-dataset` in a different location or wa
 `src/models/config/experiment_config.py`](src/models/config/experiment_config.py) for a detailed explanation of field
 names in the config.
 
-Pre-trained artifacts are available for download (~76 MB) by running:
-
-```bash
-python scripts/download.py --pretrained-artifacts
-```
-
-The default download path is `data/reproducing-results`. Or you may manually download
-at [Google Drive](https://drive.google.com/file/d/1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf/view?usp=sharing) (preview available).
+By default, trained artifacts will be saved as `data/reproducing-results/unet_YYYYMMDD_HHMMSS`.
 
 Artifacts structure can be found in [`data/README.md`](data/README.md).
 
@@ -161,6 +150,8 @@ To try out QAT by yourself, run:
 ```bash
 python scripts/qat.py -r data/reproducing-results/unet_REPLACE_WITH_YOUR_OWN
 ```
+
+with `unet_REPLACE_WITH_YOUR_OWN` replaced.
 
 This script fine-tunes a pre-trained model with QAT. You can adjust the learning rate and the number of epochs using the
 `--finetune-lr` and `--finetune-epochs` flags.
@@ -188,8 +179,9 @@ python scripts/evaluate.py \
 
 Similarly, replace `unet_20241203_214444` if you prefer to use your own quantized model.
 
-Results in _Table 2: Blink Detection Performance_, _Table 3: Blink Phase Analysis Performance_, and metrics in the
-paragraph _Openness Prediction_ under Sec 6.2 can be reproduced using the provided pre-trained artifacts.
+The following results in the artifact appendix can be reproduced:
+1. Table 1: Blink Detection Performance and Errors of Openness Curve Prediction
+2. Table 2: Blink Phase Analysis Performance
 
 ### Recurrentization baselines
 
@@ -200,11 +192,10 @@ In our implementation, the first two levels of the U-Net-like model are divided 
 encapsulating convolutional blocks. Hidden state management is not included but can be implemented easily.
 
 To explore recurrentization, refer to the notebook [
-`notebooks/recurrentization.ipynb`](notebooks/reccurentization.ipynb), which reproduces the following results from the
-paper:
+`notebooks/recurrentization.ipynb`](notebooks/reccurentization.ipynb), which reproduces the following results in the artifact appendix:
 
-1. Figure 4: Layer-wise memory footprint profiling.
-2. Figure 11 (b): Analytical computation overhead (FLOPS) comparison among the original model,
+1. Figure 1: Layer-wise memory footprint profiling.
+2. Figure 2: Analytical computation overhead (FLOPS) comparison among the original model,
    the [patch-to-patch inference](https://arxiv.org/abs/2110.15352v2) model, and the recurrentized model.
 
 ### Case studies
@@ -220,13 +211,13 @@ Or download manually from [Google Drive](https://drive.google.com/file/d/1xuP-7F
 
 The default download path is `data/case-studies`. Fields of csv files can be found in [`data/README.md`](data/README.md). 
 
-The notebook [`notebooks/case_studies.ipynb`](notebooks/case_studies.ipynb) reproduces the following results from the paper:
+The notebook [`notebooks/case_studies.ipynb`](notebooks/case_studies.ipynb) reproduces the following results from the artifact appendix:
 
-1. Table 4: Correlations between Drowsiness Measures and Blink Parameters
-2. Figure 14: Drowsiness evaluation over 12 hours.
-3. Table 5: Blink Parameter Variations Across Visual Task Difficulty Levels
-4. Figure 15: Blink parameters across different workloads. Abbreviations are the same as in Table 5.
-5. Figure 16: Partial blink detection.
+1. Table 3: Correlations between Drowsiness Measures and Blink Parameters
+2. Figure 3: Drowsiness evaluation over 12 hours.
+3. Table 4: Blink Parameter Variations Across Visual Task Difficulty Levels
+4. Figure 4: Blink parameters across different workloads.
+5. Figure 5: Partial blink detection.
 
 ## Code Structure
 
