@@ -9,9 +9,18 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def temporary_file(suffix=None):
-    """Context manager for temporary files that ensures deletion."""
-    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix)
+def temporary_file(suffix=None, dir=None):
+    """Context manager for temporary files that ensures deletion.
+
+    Args:
+        suffix: Optional file suffix
+        dir: Optional directory to store the temporary file
+    """
+    # Create the directory if it doesn't exist
+    if dir is not None:
+        os.makedirs(dir, exist_ok=True)
+
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir=dir)
     try:
         yield tmp.name
     finally:
@@ -71,22 +80,27 @@ def extract_with_progress(zip_path, extract_path):
 
 
 def main():
+    # Determine project folder first, so we can use it in default path
+    script_dir = Path(__file__).resolve().parent
+    project_folder = script_dir.parent
+    default_output_dir = str(project_folder / 'data')
+
     parser = argparse.ArgumentParser(description='Download and extract dataset resources')
     parser.add_argument('--raw-dataset', action='store_true', help='Download raw dataset')
     parser.add_argument('--processed-dataset', action='store_true', help='Download processed dataset')
     parser.add_argument('--pretrained-artifacts', action='store_true', help='Download pretrained artifacts')
     parser.add_argument('--case-studies', action='store_true', help='Download case studies')
     parser.add_argument('-a', '--all', action='store_true', help='Download all resources')
-    parser.add_argument('--output-dir', type=str, default='data',
-                        help='Output directory for extracted files')
+    parser.add_argument('--output-dir', type=str, default=default_output_dir,
+                        help='Output directory for extracted files (default: PROJECT_ROOT/data)')
 
     args = parser.parse_args()
 
     resources = {
-        "raw-dataset": "https://drive.google.com/file/d/13PjOB2recWbWKf-w7ORSInChcSQcpZhx/view?usp=sharing",
-        "processed-dataset": "https://drive.google.com/file/d/1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw/view?usp=sharing",
-        "pretrained-artifacts": "https://drive.google.com/file/d/1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf/view?usp=sharing",
-        "case-studies": "https://drive.google.com/file/d/1xuP-7FJ7OzBkA7oSgenbfwBcetXHWfc0/view?usp=sharing",
+        "raw-dataset": "https://drive.google.com/uc?id=13PjOB2recWbWKf-w7ORSInChcSQcpZhx",
+        "processed-dataset": "https://drive.google.com/uc?id=1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw",
+        "pretrained-artifacts": "https://drive.google.com/uc?id=1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf",
+        "case-studies": "https://drive.google.com/uc?id=1xuP-7FJ7OzBkA7oSgenbfwBcetXHWfc0",
     }
 
     # Determine which resources to download
@@ -123,7 +137,7 @@ def main():
         print(f"\nProcessing {resource}...")
 
         # Use context manager for temporary file
-        with temporary_file(suffix='.zip') as temp_path:
+        with temporary_file(suffix='.zip', dir=output_dir.as_posix()) as temp_path:
             if download_with_gdown(url, temp_path):
                 extract_with_progress(temp_path, output_dir)
 

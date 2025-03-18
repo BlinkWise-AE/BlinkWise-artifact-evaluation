@@ -390,7 +390,7 @@ class AllExperimentDataset:
 
         # for caching sample indices
         if cache:
-            self.temp_dir = tempfile.mkdtemp()
+            self.temp_dir = tempfile.mkdtemp(dir=self.data_folder)
         else:
             self.temp_dir = None
 

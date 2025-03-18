@@ -66,6 +66,20 @@ docker run -it --gpus all -v $(pwd):/app blinkwise
 
 ### Dataset Preparation
 
+> **NOTE**: if you encountered error running the download script like this:
+> ```
+> Error during download: Failed to retrieve file url:
+>
+>        Too many users have viewed or downloaded this file recently. Please
+>        try accessing the file again later. If the file you are trying to
+>        access is particularly large or is shared with many people, it may
+>        take up to 24 hours to be able to view or download the file. If you
+>        still can't access a file after 24 hours, contact your domain
+>        administrator.
+> ```
+> It is due to Google Drive's download quota limit with command line tools.
+> Please try manual download from the provided link.
+
 #### Raw Dataset
 
 > **NOTE**: If the goal is to test out training and evaluation scripts, you can skip the raw dataset and download the
@@ -81,7 +95,7 @@ python scripts/download.py --raw-dataset
 ```
 
 The default download path is `data/raw-dataset`. Manual download is
-available at [Google Drive](https://drive.google.com/file/d/13PjOB2recWbWKf-w7ORSInChcSQcpZhx/view?usp=sharing).
+available at [Google Drive](https://drive.google.com/file/d/13PjOB2recWbWKf-w7ORSInChcSQcpZhx/view?usp=sharing) and please place the included folder `raw-dataset/` in `data/`.
 
 #### Processed Dataset
 
@@ -91,7 +105,8 @@ You may download the processed dataset (~17.2 GB) by running:
 python scripts/download.py --processed-dataset
 ```
 
-The default download path is `data/processed-dataset`. It is also available at [Google Drive](https://drive.google.com/file/d/1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw/view?usp=sharing) for manual download.
+The default download path is `data/processed-dataset`. 
+It is also available at [Google Drive](https://drive.google.com/file/d/1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw/view?usp=sharing) for manual download and please place the included folder `processed-dataset/` in `data/`.
 
 Dataset structure can be found in [`data/README.md`](data/README.md).
 
