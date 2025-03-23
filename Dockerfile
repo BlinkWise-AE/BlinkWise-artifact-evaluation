@@ -18,7 +18,10 @@ RUN apt-get update && apt-get install -y graphviz python3 python3-pip
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # install tensorflow
-RUN pip install tensorflow[and-cuda]==2.15.0.post1
+RUN pip install --no-cache-dir tensorflow[and-cuda]==2.15.0.post1
+
+# install jupyter
+RUN pip install --no-cache-dir jupyterlab
 
 # Install Python dependencies from requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt

@@ -4,7 +4,16 @@ The artifact evaluation repo of #403 BlinkWise: Tracking Blink Dynamics and Ment
 
 ## Installation
 
-We offer installation options using Conda/pip or Docker.
+Please first clone the repository and navigate to the project root:
+
+```bash
+git clone https://github.com/BlinkWise-AE/BlinkWise-artifact-evaluation.git
+cd BlinkWise-artifact-evaluation
+```
+
+All following instructions assume you are in the project root directory.
+
+We offer installation options using **Conda/pip** or **Docker**.
 
 ### Using Conda
 
@@ -17,7 +26,7 @@ conda activate blinkwise
 pip install -r requirements.txt
 ```
 
-BlinkWise requires TensorFlow 2.15.0.post1. 
+BlinkWise requires TensorFlow 2.15.0.post1.
 Please install the GPU version of TensorFlow along with CUDA dependencies:
 
 ```bash
@@ -41,12 +50,31 @@ We require NVIDIA GPUs to use docker.
 2. To enable GPU support, install the NVIDIA Container Toolkit. Follow the instructions
    provided [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html).
 
-3. Build the Docker image and start the container using the following commands (you may need `sudo` for Docker
-   commands):
+3. Build the Docker image (9.2 GB) and start the container using the following commands:
 
 ```bash
 docker build -t blinkwise .
-docker run -it --gpus all -v $(pwd):/app blinkwise
+docker run -it --gpus all -v $(pwd):/app -p 8888:8888 blinkwise
+```
+
+If you have encountered permission issues, temporary fix is to add `sudo` before the `docker` commands. Or
+see [Linux post-installation steps for Docker Engine
+](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) for a permanent fix.
+
+By default, the container will start in the `/app` directory. Please stay in this directory to run the following
+commands.
+
+If you plan to use the container to run Jupyter notebooks in the following steps, you can start the Jupyter server by
+running the following command inside the container:
+
+```bash
+jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+```
+
+Then, open the provided link in your browser to access the Jupyter notebook interface. It will be a link like:
+
+```
+http://127.0.0.1:8888/lab?token=<TOKEN>
 ```
 
 ## Usage
@@ -82,7 +110,8 @@ python scripts/download.py --raw-dataset
 ```
 
 The default download path is `data/raw-dataset`. Manual download is
-available at [Google Drive](https://drive.google.com/file/d/13PjOB2recWbWKf-w7ORSInChcSQcpZhx/view?usp=sharing) and please place the included folder `raw-dataset/` in `data/`.
+available at [Google Drive](https://drive.google.com/file/d/13PjOB2recWbWKf-w7ORSInChcSQcpZhx/view?usp=sharing) and
+please place the included folder `raw-dataset/` under `data/`.
 
 #### Processed Dataset
 
@@ -92,8 +121,10 @@ You may download the processed dataset (~17.2 GB) by running:
 python scripts/download.py --processed-dataset
 ```
 
-The default download path is `data/processed-dataset`. 
-It is also available at [Google Drive](https://drive.google.com/file/d/1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw/view?usp=sharing) for manual download and please place the included folder `processed-dataset/` in `data/`.
+The default download path is `data/processed-dataset`.
+It is also available
+at [Google Drive](https://drive.google.com/file/d/1LAjcOhtGn0yiUtkssKf29HOc9Q9lfJLw/view?usp=sharing) for manual
+download and please place the included folder `processed-dataset/` under `data/`.
 
 Dataset structure can be found in [`data/README.md`](data/README.md).
 
@@ -121,7 +152,8 @@ python scripts/download.py --pretrained-artifacts
 ```
 
 The default download path is `data/reproducing-results`. Or you may manually download
-at [Google Drive](https://drive.google.com/file/d/1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf/view?usp=sharing) (preview available).
+at [Google Drive](https://drive.google.com/file/d/1xB5ZEhNrdh-Zm5A9vqvZqV-BQY6nEpjf/view?usp=sharing) (preview
+available). Please place the included folder `reproducing-results/` under `data/`.
 
 To train the model, run:
 
@@ -180,6 +212,7 @@ python scripts/evaluate.py \
 Similarly, replace `unet_20241203_214444` if you prefer to use your own quantized model.
 
 The following results in the artifact appendix can be reproduced:
+
 1. Table 1: Blink Detection Performance and Errors of Openness Curve Prediction
 2. Table 2: Blink Phase Analysis Performance
 
@@ -192,7 +225,8 @@ In our implementation, the first two levels of the U-Net-like model are divided 
 encapsulating convolutional blocks. Hidden state management is not included but can be implemented easily.
 
 To explore recurrentization, refer to the notebook [
-`notebooks/recurrentization.ipynb`](notebooks/reccurentization.ipynb), which reproduces the following results in the artifact appendix:
+`notebooks/recurrentization.ipynb`](notebooks/reccurentization.ipynb), which reproduces the following results in the
+artifact appendix:
 
 1. Figure 1: Layer-wise memory footprint profiling.
 2. Figure 2: Analytical computation overhead (FLOPS) comparison among the original model,
@@ -207,11 +241,15 @@ running:
 python scripts/download.py --case-studies
 ```
 
-Or download manually from [Google Drive](https://drive.google.com/file/d/1xuP-7FJ7OzBkA7oSgenbfwBcetXHWfc0/view?usp=sharing) (preview available).
+Or download manually
+from [Google Drive](https://drive.google.com/file/d/1xuP-7FJ7OzBkA7oSgenbfwBcetXHWfc0/view?usp=sharing) (preview
+available).
 
-The default download path is `data/case-studies`. Fields of csv files can be found in [`data/README.md`](data/README.md). 
+The default download path is `data/case-studies`. Fields of csv files can be found in [
+`data/README.md`](data/README.md).
 
-The notebook [`notebooks/case_studies.ipynb`](notebooks/case_studies.ipynb) reproduces the following results from the artifact appendix:
+The notebook [`notebooks/case_studies.ipynb`](notebooks/case_studies.ipynb) reproduces the following results from the
+artifact appendix:
 
 1. Table 3: Correlations between Drowsiness Measures and Blink Parameters
 2. Figure 3: Drowsiness evaluation over 12 hours.
